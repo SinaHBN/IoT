@@ -4,6 +4,7 @@ from flask import Flask, render_template
 from flask_mqtt import Mqtt
 from flask_socketio import SocketIO
 from flask_bootstrap import Bootstrap
+import time
 
 eventlet.monkey_patch()
 
@@ -36,7 +37,7 @@ def handle_client_connect(json):
 
 @socketio.on('publishTemp')
 def handle_publish_temperature_and_humidity():
-    data = 0 # should be implemented
+    data = time.strftime("%A, %d. %B %Y %I:%M:%S %p") # should be implemented via GPIO
     mqtt.publish("HumidityTemp", data, 0)
 
 
