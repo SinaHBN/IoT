@@ -29,5 +29,26 @@ def index():
     return render_template('index.html')
 
 
-if __name__ = '__main__':
+@socketio.on('client_connected')
+def handle_client_connect(json):
+    print("client connected received: {0}".format(str(json)))
+
+
+@socketio.on('publishTemp')
+def handle_publish_temperature_and_humidity():
+    data = 0 # should be implemented
+    mqtt.publish("HumidityTemp", data, 0)
+
+
+@mqtt.on_message()
+def handle_mqtt_message(client, userdata, message):
+    data = dict(
+        topic=message.topic,
+        payload=message.payload.decode(),
+        qos=message.qos
+    )
+    print('DATA____________: ', data)
+    socketio.emit('getTemp', data=data)
+
+if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000, use_reloader=False, debug=True)
