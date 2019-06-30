@@ -5,10 +5,18 @@ from flask_mqtt import Mqtt
 from flask_socketio import SocketIO
 from flask_bootstrap import Bootstrap
 import time
+from flask_sqlalchemy import SQLAlchemy
+import os
 
 eventlet.monkey_patch()
 
+project_dir = os.path.dirname(os.path.abspath(__file__))
+database_file = "sqlite:///{}".format(os.path.join(project_dir, "database.db"))
+
 app = Flask(__name__)
+
+app.config["SQLALCHEMY_DATABASE_URI"] = database_file
+
 app.config['MQTT_BROKER_URL'] = 'localhost'
 app.config['MQTT_BROKER_PORT'] = 1883
 app.config['MQTT_CLIENT_ID'] = 'mqtt-client'
@@ -22,6 +30,7 @@ app.config['MQTT_LAST_WILL_QOS'] = 0
 mqtt = Mqtt(app)
 socketio = SocketIO(app)
 bootstrap = Bootstrap(app)
+db = SQLAlchemy(app)
 
 mqtt.subscribe('HumidityTemp')
 
