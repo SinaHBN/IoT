@@ -1,0 +1,33 @@
+import eventlet
+import json
+from flask import Flask, render_template
+from flask_mqtt import Mqtt
+from flask_socketio import SocketIO
+from flask_bootstrap import Bootstrap
+
+eventlet.monkey_patch()
+
+app = Flask(__name__)
+app.config['MQTT_BROKER_URL'] = 'localhost'
+app.config['MQTT_BROKER_PORT'] = 1883
+app.config['MQTT_CLIENT_ID'] = 'mqtt-client'
+app.config['MQTT_KEEPALIVE'] = 65535
+app.config['MQTT_TLS_ENLABLED'] = False
+app.config['MQTT_LAST_WILL_TOPIC'] = 'LastWill'
+app.config['MQTT_LAST_WILL_MESSAGE'] = 'Bye!'
+app.config['MQTT_LAST_WILL_QOS'] = 0
+
+
+mqtt = Mqtt(app)
+socketio = SocketIO(app)
+bootstrap = Bootstrap(app)
+
+mqtt.subscribe('HumidityTemp')
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+
+if __name__ = '__main__':
+    socketio.run(app, host='0.0.0.0', port=5000, use_reloader=False, debug=True)
