@@ -14,11 +14,29 @@
         socket.on('connect', function(){
             socket.emit('client_connected', {data: 'Client connected on websocket!'})
         });
+
+        window.setInterval(function(){
+            socket.emit('publishTemp')
+        }, 2000); // every 2 seconds
+
+        socket.on('getTemp', function(data){
+            console.log(data)
+            $('#temp').fadeOut(function(){
+                $(this).text(data.payload).fadeIn();
+            });
+        });
     });   
 </script>
 
 {% endblock %}
 
 {% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-6">
+            <h1 id="temp"></h1>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
