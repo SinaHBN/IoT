@@ -3,12 +3,17 @@
 
 {% block styles %}
 {{ super() }}
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
+<link href="{{url_for('static', filename='font-awsome/css/all.min.css') }}" rel="stylesheet" type="text/css" />
+<link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+ <link href="{{url_for('static', filename='css/sb-admin-2.min.css') }}" rel="stylesheet" />
+
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
 <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
-<!-- <script type="text/javascript" src="./socket.io.min.js" /> -->
+<!-- <script type="text/javascript" src="{{url_for('static', filename='socket.io.min.js')}}" /> -->
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function(){
         var socket = io.connect('http://' + document.domain + ':' + location.port);
@@ -32,12 +37,203 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
+<!-- <div class="container-fluid">
     <div class="row">
         <div class="col-xs-6">
             <h1 id="temp"></h1>
         </div>
     </div>
-</div>
+</div> -->
+
+
+<img src="{{url_for('static', filename='img/13.jpg') }}" class="img-fluid"  style="width: 100%;  height: 80px;  ">
+<div id="page-top" style="background-image:url({{url_for('static', filename='img/7.jpg') }});  " >
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+          <h1 class="h3 mb-0 text-gray-800"></h1>
+          
+        </div>
+  
+      <!Temprature and Humitity>  
+        <div class="row" style="margin-top: 1px; margin-bottom: 10px; min-height: 1px">
+           
+            <!show Temprature at Now> 
+           <div class="col-sm-12 col-xs-12 col-xl-3 col-md-7 mb-6 card border-left-success shadow h-100 py-2" style="min-height: 1px; margin: 0 auto" >
+               <div class="row">
+                   <div class="col-xl-12 col-md-12 mb-12 " style="min-height: 5px" card border-left-success shadow h-100 py-2>
+                     
+              <div class="card-body" style=" border-bottom-color: #007bff">
+                <div class="row no-gutters align-items-center" >
+                    
+                  <div class="col mr-2" >
+                     
+                    <div class="text-xs font-weight-bold text-success text-uppercase mb-10" style="text-align: center">Temperature  &nbsp; <i class='fas fa-temperature-high' style='font-size:37px;color:red' style="margin-left: 5px"></i>        
+                  
+                    </div>
+                  
+                  </div>
+                </div>
+             
+                     </div>
+                   </div>
+                 
+                   </div>
+                  <div class="row">
+                   <div class="col-sm-4 col-md-12 col-xs-3 mb-12 " style="min-height: 5px; margin: 0 auto" card border-left-success shadow h-100 py-2>
+                     
+              <div class="card-body" style=" border-bottom-color: #007bff">
+                <div class="row no-gutters align-items-center" style="margin: 0 atuo"  >
+                    
+                  <div style="margin: 0 auto">
+                     
+                  <label  media="(max-width: 600px)" style=" size: 200px   ;   background-color: white ; width: 140PX ; height:50px ; margin-top: 30px ; margin-right: auto ; margin-left: auto ; border:2px solid red ;border-radius:.35rem  " >
+                      <p id="temp"></p>
+                        </label>
+          
+                    </div>
+                   
+                  </div>
+                </div>
+              
+                     </div>
+                   </div>
+                
+                   </div>
+                       
+                  
+             <!show Humitity at Now>  
+            <!-- <div class="col-xl-0 col-lg-1 mb-1" style="height:100px" ></div> -->
+             <!show Humitity at Now> 
+          
+                <div class="col-sm-12 col-xs-12 col-xl-3 col-md-7 mb-6 card border-left-successs shadow h-100 py-2" style="min-height: 1px; margin: 0 auto" >
+               <div class="row">
+                   <div class="col-xl-12 col-lg-12 mb-12 " style="min-height: 5px" card border-left-success shadow h-100 py-2>
+                     
+              <div class="card-body" style=" border-bottom-color: #007bff">
+                <div class="row no-gutters align-items-center" >
+                    
+                  <div class="col mr-2" >
+                     
+                    <div class="text-xs font-weight-bold text-successs text-uppercase mb-10" style="text-align: center">Humidity  &nbsp&nbsp; <i class=' 	fas fa-cloud-rain' style='font-size:50px;color:blue' style="margin-left: 20px"></i>        
+                  
+                    </div>
+                  
+                  </div>
+                </div>
+             
+                     </div>
+                   </div>
+                 
+                   </div>
+                  <div class="row">
+                   <div class="col-xl-12 col-lg-12 mb-12 " style="min-height: 5px" card border-left-success shadow h-100 py-2>
+                     
+              <div class="card-body" style=" border-bottom-color: #007bff">
+                <div class="row no-gutters align-items-center" >
+                    
+                  <div  style="margin: 0 auto">
+                  <label media="(max-width: 600px)" style=" size: 200px   ;   background-color: white ; width: 140PX ; height:50px ; margin-top: 20px ; margin-right: auto ; margin-left: auto ; border:2px solid blue ;border-radius:.35rem  " >
+                        </label>
+          
+                    </div>
+                   
+                  </div>
+                </div>
+              
+                     </div>
+                   </div>
+                
+                   </div>
+           
+           
+         
+            
+            
+        </div>
+
+                    <div class="h5 mb-0 font-weight-bold text-gray-800"></div>
+                  </div>
+                     
+        <!-- select Date & Time for Chart -->
+        <div class="row" style=" margin-top: 1px">
+
+            <div class="col-xl-2 col-lg-2" ></div>
+
+             <div class="col-xl-8 col-lg-8" >
+            <div class="card shadow mb-12"  >
+              
+                <div class="text-xs card-header py-3 d-flex flex-row align-items-center justify-content-between" style="min-width: 1px ; background-color: #000033 ">
+                    <h6 class="text-xs m-0 font-weight-bold text-primary align-items-center justify-content-between" style="font-style: #fff" >Select Date & Time for Chart</h6>
+              
+              </div>
+            
+                 <!-- Start Date & Time for Chart -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between" style=" min-height: 30px ; background-color: #000033  ">
+           
+                     
+                        <div class="col-xl-4 col-lg-4 " style="margin-top:1px  "  >
+                            <form action="/action_page.php" style="color: #fff">
+                                From: <input size="21" type="text" value="2012-06-15 14:45"  class="form_datetime" style="border:2px solid #330099 ;border-radius:.35rem ; min-height: 40px ; background-color: #ccccff ">
+
+<script type="text/javascript">
+  $(".form_datetime").datetimepicker({format: 'yyyy-mm-dd hh:ii'});
+</script>  
+</form> 
+                        </div>  
+                     
+                     
+                    
+                       <!-- End Date & Time for Chart -->
+  <div class="col-xl-4 col-lg-4 " style="margin-top:1px  ">
+                <form action="/action_page.php" style="color: #fff">
+To: <input size="21" type="text" value="2012-06-15 14:45"  class="form_datetime" style="border:2px solid #330099 ;border-radius:.35rem ; min-height: 40px ; background-color: #ccccff  ">
+
+<script type="text/javascript">
+  $(".form_datetime").datetimepicker({format: 'yyyy-mm-dd hh:ii'});
+</script> 
+</form> 
+              </div>
+                     
+                <!-- Button For design Chart -->      
+           <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between" style=" background-color: #000033">
+                   <div style=" margin-left: 10px ; min-height:1px ">
+                        
+                         
+                         <form action="/action_page.php">
+                             <button class="btn btn-secondary" type="button" data-dismiss="modal" style=" min-width: 110px; min-height: 40px ;border:2px solid blue ;border-radius:.35rem ; background-color: #ccccff; color: #000  ">Drawing Chart</button>
+                           
+
+</form> 
+                    </div>    
+                    
+                </div> 
+                   
+              
+              </div>
+                
+               
+              <!-- Chart Area -->
+              <div class="card-body">
+                <div class="chart-area">
+                  
+                </div>
+              </div>
+              
+            </div>
+          </div>
+              
+                <div class="col-xl-2 col-lg-2" ></div>         
+      </div>
+  
+
+
+
+        
+        
+        
+<footer><img src="{{url_for('static', filename='img/13.jpg') }}" class="img-fluid" alt="Responsive image" style="width: 100%;  height: 50px;"></footer>
+
+    </div>
+
+
 
 {% endblock %}
