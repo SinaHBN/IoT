@@ -8,6 +8,7 @@ import time
 from flask_sqlalchemy import SQLAlchemy
 import os
 from datetime import datetime
+import Adafruit_DHT
 
 eventlet.monkey_patch()
 
@@ -73,6 +74,11 @@ def handle_client_connect(json):
 @socketio.on('publishTemp')
 def handle_publish_temperature_and_humidity():
     data = time.strftime("%A, %d. %B %Y %I:%M:%S %p") # should be implemented via GPIO
+    humidity, temperature = Adafruit_DHT.read_retry(11, 4)
+    data = dict(
+        humidity=humidity,
+        temperature=temperature
+        )
     mqtt.publish("HumidityTemp", data, 0)
 
 
@@ -84,8 +90,10 @@ def handle_mqtt_message(client, userdata, message):
         qos=message.qos
     )
     # print('DATA____________: ', data)
-    temperature = 1.0  #data.payload # should be implemented
-    humidity = 2.0 #data.payload # should be implemented
+    temperature = data.payload.temperature  #data.payload # should be implemented
+    humidity = data.payload.humidity
+    print('temp= ', temperature, ' hum= ', humidity)
+    #data.payload # should be implemented
     db.session.add(TempAndHum(temperature=temperature, humidity=humidity))
     db.session.commit()
     socketio.emit('getTemp', data=data)
