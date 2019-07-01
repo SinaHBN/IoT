@@ -7,6 +7,7 @@ from flask_bootstrap import Bootstrap
 import time
 from flask_sqlalchemy import SQLAlchemy
 import os
+from datetime import datetime
 
 eventlet.monkey_patch()
 
@@ -15,7 +16,8 @@ database_file = "sqlite:///{}".format(os.path.join(project_dir, "database.db"))
 
 app = Flask(__name__)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = database_file
+app.config['SQLALCHEMY_DATABASE_URI'] = database_file
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 app.config['MQTT_BROKER_URL'] = 'localhost'
 app.config['MQTT_BROKER_PORT'] = 1883
@@ -31,6 +33,30 @@ mqtt = Mqtt(app)
 socketio = SocketIO(app)
 bootstrap = Bootstrap(app)
 db = SQLAlchemy(app)
+
+
+# ______________MODEL______________________________________
+class TempAndHum(db.Model):
+    id = db.Column(db.Integer, unique=True, nullable=False, primary_key=True)
+    temperature = db.Column(db.Float)
+    humidity = db.Column(db.Float)
+    datetime = db.Column(db.DateTime, default=datetime.utcnow)
+
+def __repr__(self):
+    return "<Record: id={0}, temp={1}, hum= {2}, datetime={3}".format(self.id, self.temperature, self.humidity, self.datetime)
+
+
+
+
+
+
+
+
+# _________________________________________________________
+
+
+
+
 
 mqtt.subscribe('HumidityTemp')
 
@@ -57,7 +83,11 @@ def handle_mqtt_message(client, userdata, message):
         payload=message.payload.decode(),
         qos=message.qos
     )
-    print('DATA____________: ', data)
+    # print('DATA____________: ', data)
+    temperature = 1.0  #data.payload # should be implemented
+    humidity = 2.0 #data.payload # should be implemented
+    db.session.add(TempAndHum(temperature=temperature, humidity=humidity))
+    db.session.commit()
     socketio.emit('getTemp', data=data)
 
 if __name__ == '__main__':
