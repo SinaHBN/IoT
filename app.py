@@ -42,7 +42,7 @@ class TempAndHum(db.Model):
     id = db.Column(db.Integer, unique=True, nullable=False, primary_key=True)
     temperature = db.Column(db.Float)
     humidity = db.Column(db.Float)
-    datetime = db.Column(db.DateTime, default=datetime.utcnow)
+    datetime = db.Column(db.String, default=str(time.strftime("%A, %d. %B %Y %I:%M:%S %p")))
 
 def __repr__(self):
     return "<Record: id={0}, temp={1}, hum= {2}, datetime={3}".format(self.id, self.temperature, self.humidity, self.datetime)
@@ -79,7 +79,7 @@ def handle_mqtt_message(client, userdata, message):
         payload=message.payload.decode(),
         qos=message.qos
     )
-    print('DATA____________: ', data)
+    #print('DATA____________: ', data)
     tempHum = message.payload.decode().split(",")
     temperature = tempHum[0]
     humidity = tempHum[1]
@@ -87,15 +87,18 @@ def handle_mqtt_message(client, userdata, message):
     #humidity = data.payload
     #print('temp= ', temperature, ' hum= ', humidity)
     #data.payload # should be implemented
-    db.session.add(TempAndHum(temperature=temperature, humidity=humidity))
+    db.session.add(TempAndHum(temperature=temperature, humidity=humidity, datetime=str(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))))
     db.session.commit()
     socketio.emit('getTemp', data=data)
-    print(':::::::::::::::::::::get Temp ended:::::::::::::::::::')
+    #print(':::::::::::::::::::::get Temp ended:::::::::::::::::::')
 
 
 @socketio.on('getGraphData')
 def handle_get_graph_data():
-    data = TempAndHum.query.order_by(sqlalchemy.desc(TempAndHum.id)).limit(10).all()
+    query_result = TempAndHum.query.order_by(sqlalchemy.desc(TempAndHum.id)).limit(5).all()
+    data = [0 for x in range(5)]
+    for i in range(5):
+        data[4-i]= str(query_result[i].temperature)+";"+str(query_result[i].humidity)+";"+str(query_result[i].datetime)
     socketio.emit('drawGraph', data=data)
 
 
