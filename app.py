@@ -6,6 +6,7 @@ from flask_socketio import SocketIO
 from flask_bootstrap import Bootstrap
 import time
 from flask_sqlalchemy import SQLAlchemy
+import sqlalchemy
 import os
 from datetime import datetime
 import Adafruit_DHT
@@ -47,16 +48,7 @@ def __repr__(self):
     return "<Record: id={0}, temp={1}, hum= {2}, datetime={3}".format(self.id, self.temperature, self.humidity, self.datetime)
 
 
-
-
-
-
-
-
 # _________________________________________________________
-
-
-
 
 
 mqtt.subscribe('HumidityTemp')
@@ -73,7 +65,7 @@ def handle_client_connect(json):
 
 @socketio.on('publishTemp')
 def handle_publish_temperature_and_humidity():
-    #data = time.strftime("%A, %d. %B %Y %I:%M:%S %p") # should be implemented via GPIO
+    # data = time.strftime("%A, %d. %B %Y %I:%M:%S %p") # should be implemented via GPIO
     humidity, temperature = Adafruit_DHT.read_retry(11, 4)
     data = str(temperature)+","+str(humidity)
     mqtt.publish("HumidityTemp", data, 0)
@@ -99,6 +91,14 @@ def handle_mqtt_message(client, userdata, message):
     db.session.commit()
     socketio.emit('getTemp', data=data)
     print(':::::::::::::::::::::get Temp ended:::::::::::::::::::')
+
+
+@socketio.on('getGraphData')
+def handle_get_graph_data():
+    data = TempAndHum.query.order_by(sqlalchemy.desc(TempAndHum.id)).limit(10).all()
+    socketio.emit('drawGraph', data=data)
+
+
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000, use_reloader=False, debug=True)
