@@ -14,6 +14,58 @@
 {{ super() }}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
 <!-- <script type="text/javascript" src="{{url_for('static', filename='socket.io.min.js')}}" /> -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.bundle.min.js"></script>
+
+<script>
+  // var Tvalues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  // var Hvalues = [2, 3, 4, 5, 2, 3, 5, 1, 2, 3];
+  var timeStamp = [];
+  function showGraph(Tvalues, Hvalues, timeStamp)
+  {
+      var ctx = document.getElementById("Chart").getContext('2d');
+      var Chart2 = new Chart(ctx, {
+          type: 'line',
+          data: {
+              labels: timeStamp,  //Bottom Labeling
+              datasets: [{
+                  label: "Temperature",
+                  fill: false,  //Try with true
+                  backgroundColor: 'rgba( 243, 156, 18 , 1)', //Dot marker color
+                  borderColor: 'rgba( 243, 156, 18 , 1)', //Graph Line Color
+                  data: Tvalues,
+              },
+              {
+                  label: "Humidity",
+                  fill: false,  //Try with true
+                  backgroundColor: 'rgba(156, 18, 243 , 1)', //Dot marker color
+                  borderColor: 'rgba(156, 18, 243 , 1)', //Graph Line Color
+                  data: Hvalues,
+              }],
+          },
+          options: {
+              title: {
+                      display: true,
+                  
+                  },
+              maintainAspectRatio: false,
+              elements: {
+              line: {
+                      tension: 0.5 //Smoothening (Curved) of data lines
+                  }
+              },
+              scales: {
+                      yAxes: [{
+                          ticks: {
+                              beginAtZero:true
+                          }
+                      }]
+              }
+          }
+      });
+  
+  }
+      
+  </script>
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function(){
         var socket = io.connect('http://' + document.domain + ':' + location.port);
@@ -23,6 +75,7 @@
 
         window.setInterval(function(){
             socket.emit('publishTemp')
+            socket.emit('getGraphData')
         }, 10000); // every 2 seconds
 
         socket.on('getTemp', function(data){
@@ -34,15 +87,25 @@
             $('#temp').text(temphum[0]);
             $('#hum').text(temphum[1]);
         });
+
+        socket.on('drawGraph', function(data){
+          temps = []
+          hums = []
+          for(i=0;i<10;i++){
+            temps[i] = data[i].temperature;
+            hums[i] = data[i].humidity;
+          }
+          showGraph(temps, hums, []);
+        });
     });   
 </script>
-//<script type="text/javascript">
+<script type="text/javascript">
   //$(".form_datetime").datetimepicker({format: 'yyyy-mm-dd hh:ii'});
 //</script>
 
-//<script type="text/javascript">
+<script type="text/javascript">
 //  $(".form_datetime").datetimepicker({format: 'yyyy-mm-dd hh:ii'});
-//</script> 
+</script> 
 
 {% endblock %}
 
@@ -101,9 +164,9 @@
                    </div>
                        
                   
-             <!show Humitity at Now>  
+             <!-- <!show Humitity at Now>   -->
             <!-- <div class="col-xl-0 col-lg-1 mb-1" style="height:100px" ></div> -->
-             <!show Humitity at Now> 
+             <!-- <!show Humitity at Now>  -->
           
                 <div class="col-sm-12 col-xs-12 col-xl-3 col-md-7 mb-6 card border-left-successs shadow h-100 py-2" style="min-height: 1px; margin: 0 auto" >
                <div class="row">
@@ -212,7 +275,7 @@ To: <input size="21" type="text" value="2012-06-15 14:45"  class="form_datetime"
               <!-- Chart Area -->
               <div class="card-body">
                 <div class="chart-area">
-                  
+                  <canvas id="Chart" width="400" height="400"></canvas>
                 </div>
               </div>
               
