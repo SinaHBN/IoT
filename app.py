@@ -65,7 +65,6 @@ def handle_client_connect(json):
 
 @socketio.on('publishTemp')
 def handle_publish_temperature_and_humidity():
-    # data = time.strftime("%A, %d. %B %Y %I:%M:%S %p") # should be implemented via GPIO
     humidity, temperature = Adafruit_DHT.read_retry(11, 4)
     data = str(temperature)+","+str(humidity)
     mqtt.publish("HumidityTemp", data, 0)
@@ -79,18 +78,12 @@ def handle_mqtt_message(client, userdata, message):
         payload=message.payload.decode(),
         qos=message.qos
     )
-    #print('DATA____________: ', data)
     tempHum = message.payload.decode().split(",")
     temperature = tempHum[0]
     humidity = tempHum[1]
-    #temperature = data.payload  #data.payload # should be implemented
-    #humidity = data.payload
-    #print('temp= ', temperature, ' hum= ', humidity)
-    #data.payload # should be implemented
     db.session.add(TempAndHum(temperature=temperature, humidity=humidity, datetime=str(time.strftime("%A, %d. %B %Y %I:%M:%S %p"))))
     db.session.commit()
     socketio.emit('getTemp', data=data)
-    #print(':::::::::::::::::::::get Temp ended:::::::::::::::::::')
 
 
 @socketio.on('getGraphData')
